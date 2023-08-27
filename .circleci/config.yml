@@ -9,7 +9,7 @@ jobs:
             apt update && apt upgrade -y
             apt install -f -y git
             ln -fs /usr/share/zoneinfo/Asia/Jakarta /etc/localtime && date
-            git clone --depth=1 https://github.com/missgoin/vince3.git -b main builder_kernel
+            git clone --depth=1 https://github.com/fredslbn/vince.git -b main builder_kernel
             cd builder_kernel
             cp -af sources.list /etc/apt/
             cp -af 99own /etc/apt/apt.conf.d/

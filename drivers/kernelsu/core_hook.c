@@ -232,8 +232,10 @@ int ksu_handle_prctl(int option, unsigned long arg2, unsigned long arg3,
 		// someone wants to be root manager, just check it!
 		// arg3 should be `/data/user/<userId>/<manager_package_name>`
 		char param[128];
-		if (copy_from_user(param, arg3, sizeof(param))) {
+		if (ksu_strncpy_from_user_nofault(param, arg3, sizeof(param)) == -EFAULT) {
+#ifdef CONFIG_KSU_DEBUG
 			pr_err("become_manager: copy param err\n");
+#endif
 			return 0;
 		}
 
@@ -559,7 +561,14 @@ static int handler_pre(struct kprobe *p, struct pt_regs *regs)
 	int option = (int)PT_REGS_PARM1(real_regs);
 	unsigned long arg2 = (unsigned long)PT_REGS_PARM2(real_regs);
 	unsigned long arg3 = (unsigned long)PT_REGS_PARM3(real_regs);
-	unsigned long arg4 = (unsigned long)PT_REGS_PARM4(real_regs);
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 16, 0)
+	// PRCTL_SYMBOL is the arch-specificed one, which receive raw pt_regs from syscall
+	unsigned long arg4 = (unsigned long)PT_REGS_SYSCALL_PARM4(real_regs);
+#else
+	// PRCTL_SYMBOL is the common one, called by C convention in do_syscall_64
+	// https://elixir.bootlin.com/linux/v4.15.18/source/arch/x86/entry/common.c#L287
+	unsigned long arg4 = (unsigned long)PT_REGS_CCALL_PARM4(real_regs);
+#endif
 	unsigned long arg5 = (unsigned long)PT_REGS_PARM5(real_regs);
 
 	return ksu_handle_prctl(option, arg2, arg3, arg4, arg5);
@@ -579,7 +588,7 @@ static int renameat_handler_pre(struct kprobe *p, struct pt_regs *regs)
 	struct dentry *new_entry = rd->new_dentry;
 #else
 	struct dentry *old_entry = (struct dentry *)PT_REGS_PARM2(regs);
-	struct dentry *new_entry = (struct dentry *)PT_REGS_PARM4(regs);
+	struct dentry *new_entry = (struct dentry *)PT_REGS_CCALL_PARM4(regs);
 #endif
 
 	return ksu_handle_rename(old_entry, new_entry);

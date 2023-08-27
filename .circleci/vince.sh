@@ -32,16 +32,16 @@ IMAGE=$(pwd)/out/arch/arm64/boot/Image.gz-dtb
 VERBOSE=0
 
 # Kernel Version
-KERVER=$(make kernelversion)
+#KERVER=$(make kernelversion)
 
-COMMIT_HEAD=$(git log --oneline -1)
+#COMMIT_HEAD=$(git log --oneline -1)
 
 # Date and Time
 DATE=$(TZ=Asia/Jakarta date +"%Y%m%d-%T")
 TANGGAL=$(date +"%F%S")
 
 # Specify Final Zip Name
-ZIPNAME=SUPER.KERNEL
+ZIPNAME="SUPER.KERNEL-VINCE-$(TZ=Asia/Jakarta date +"%Y%m%d-%H%M").zip"
 FINAL_ZIP=${ZIPNAME}-${DEVICE}-${TANGGAL}.zip
 FINAL_ZIP_ALIAS=Karenulvin-${TANGGAL}.zip
 
@@ -109,7 +109,7 @@ function cloneTC() {
 	fi
 	
     # Clone AnyKernel
-    git clone --depth=1 https://github.com/missgoin/AnyKernel3.git
+    #git clone --depth=1 https://github.com/missgoin/AnyKernel3.git
 
 	}
 
@@ -261,12 +261,12 @@ function zipping() {
 	
 	# Zipping and Push Kernel
 	cd AnyKernel3 || exit 1
-        zip -r9 ${FINAL_ZIP_ALIAS} *
-        MD5CHECK=$(md5sum "$FINAL_ZIP_ALIAS" | cut -d' ' -f1)
-        echo "Zip: $FINAL_ZIP_ALIAS"
-        #curl -T $FINAL_ZIP_ALIAS temp.sh; echo
-        #curl -T $FINAL_ZIP_ALIAS https://oshi.at; echo
-        curl --upload-file $FINAL_ZIP_ALIAS https://free.keep.sh; echo
+        zip -r9 ${ZIPNAME} *
+        MD5CHECK=$(md5sum "$ZIPNAME" | cut -d' ' -f1)
+        echo "Zip: $ZIPNAME"
+        #curl -T $ZIPNAME temp.sh; echo
+        #curl -T $ZIPNAME https://oshi.at; echo
+        curl --upload-file $ZIPNAME https://free.keep.sh
     cd ..
 }
     
