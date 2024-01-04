@@ -489,12 +489,11 @@ static bool should_umount(struct path *path)
 
 static void ksu_umount_mnt(struct path *path, int flags)
 {
-
+    // patch kernelsu for path_umount
 	int err = path_umount(path, flags);
 	if (err) {
 		pr_info("umount %s failed: %d\n", path->dentry->d_iname, err);
 	}
-
 }
 
 static void try_umount(const char *mnt, bool check_mnt, int flags)
@@ -567,6 +566,7 @@ int ksu_handle_setuid(struct cred *new, const struct cred *old)
 	try_umount("/vendor", true, 0);
 	try_umount("/product", true, 0);
 	try_umount("/data/adb/modules", false, MNT_DETACH);
+	try_umount("/debug_ramdisk", false, MNT_DETACH);
 
 	return 0;
 }
