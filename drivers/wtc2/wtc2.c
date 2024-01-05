@@ -26,7 +26,7 @@ static void* find_sym( const char *sym ) {  // find address kernel symbol sym
 		if( 0 == strcmp( (char*)data, sym ) ) { 
 			faddr = addr; 
 			return 1; 
-		} 
+		}
 		else return 0; 
 	}; 
 	// -------------------------------------------------------- 

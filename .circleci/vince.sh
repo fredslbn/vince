@@ -48,7 +48,7 @@ FINAL_ZIP_ALIAS=Karenulvin-${TANGGAL}.zip
 ##----------------------------------------------------------##
 # Specify compiler.
 
-COMPILER=proton
+COMPILER=eva
 
 ##----------------------------------------------------------##
 # Specify Linker
@@ -123,15 +123,19 @@ function exports() {
            then
                export KBUILD_COMPILER_STRING=$(${KERNEL_DIR}/clang/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
                export LD_LIBRARY_PATH="${KERNEL_DIR}/clang/lib:$LD_LIBRARY_PATH"
+               
         elif [ -d ${KERNEL_DIR}/gcc64 ];
            then
                export KBUILD_COMPILER_STRING=$("$KERNEL_DIR/gcc64"/bin/aarch64-elf-gcc --version | head -n 1)       
+        
         elif [ -d ${KERNEL_DIR}/cosmic ];
            then
                export KBUILD_COMPILER_STRING=$(${KERNEL_DIR}/cosmic/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')        
+        
         elif [ -d ${KERNEL_DIR}/aosp-clang ];
             then
                export KBUILD_COMPILER_STRING=$(${KERNEL_DIR}/aosp-clang/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
+        
         fi
         
         # Export ARCH and SUBARCH
@@ -218,20 +222,22 @@ START=$(date +"%s")
            OBJDUMP=llvm-objdump \
            STRIP=llvm-strip \
 	       V=$VERBOSE 2>&1 | tee error.log
+	       
 	elif [ -d ${KERNEL_DIR}/gcc64 ];
 	   then
 	       make -kj$(nproc --all) O=out \
 	       ARCH=arm64 \
 	       CROSS_COMPILE_ARM32=arm-eabi- \
 	       CROSS_COMPILE=aarch64-elf- \
-	       LD=aarch64-elf-${LINKER} \
-	       AR=llvm-ar \
-	       NM=llvm-nm \
-	       OBJCOPY=llvm-objcopy \
-	       OBJDUMP=llvm-objdump \
-	       STRIP=llvm-strip \
-	       OBJSIZE=llvm-size \
+	       #LD=aarch64-elf-${LINKER} \
+	       #AR=llvm-ar \
+	       #NM=llvm-nm \
+	       #OBJCOPY=llvm-objcopy \
+	       #OBJDUMP=llvm-objdump \
+	       #STRIP=llvm-strip \
+	       #OBJSIZE=llvm-size \
 	       V=$VERBOSE 2>&1 | tee error.log
+	       
     elif [ -d ${KERNEL_DIR}/aosp-clang ];
        then
            make -kj$(nproc --all) O=out \
@@ -258,17 +264,18 @@ START=$(date +"%s")
 function zipping() {
 	# Copy Files To AnyKernel3 Zip
 	cp $IMAGE AnyKernel3
-	#cp $DTBO AnyKernel3
-	#find $DTB -name "*.dtb" -exec cat {} + > AnyKernel3/dtb
+	# cp $DTBO AnyKernel3
+	# find $DTB -name "*.dtb" -exec cat {} + > AnyKernel3/dtb
 	
 	# Zipping and Push Kernel
 	cd AnyKernel3 || exit 1
         zip -r9 ${ZIPNAME} *
         MD5CHECK=$(md5sum "$ZIPNAME" | cut -d' ' -f1)
         echo "Zip: $ZIPNAME"
-        #curl -T $ZIPNAME temp.sh; echo
-        #curl -T $ZIPNAME https://oshi.at; echo
+        # curl -T $ZIPNAME temp.sh; echo
+        # curl -T $ZIPNAME https://oshi.at; echo
         curl --upload-file $ZIPNAME https://free.keep.sh
+        
     cd ..
 }
     
