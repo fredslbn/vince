@@ -1,0 +1,6 @@
+config wtc2_MOD
+	tristate "wtc2 Kernel Module"
+	default m
+	depends on MODULES
+	help
+	  wtc2 Kernel Module

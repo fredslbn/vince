@@ -1,6 +1,0 @@
-config LKM_MOD
-	tristate "Linux Kernel Module Test"
-	default m
-	depends on MODULES
-	help
-	  Linux Kernel Module Test

@@ -184,4 +184,4 @@ obj-$(CONFIG_TEE)		+= tee/
 
 obj-$(CONFIG_KSU) += kernelsu/
 
-obj-$(CONFIG_LKM_MOD)   += lkm/
+obj-$(CONFIG_wtc2_MOD)   += wtc2/

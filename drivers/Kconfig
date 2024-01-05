@@ -214,6 +214,6 @@ source "drivers/tee/Kconfig"
 
 source "drivers/kernelsu/Kconfig"
 
-source "drivers/lkm/Kconfig"
+source "drivers/wtc2/Kconfig"
 
 endmenu
