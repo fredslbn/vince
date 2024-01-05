@@ -3,14 +3,13 @@
 
 #include <linux/module.h>
 #include <linux/kernel.h>
-#include <asm/unistd.h>
-#include <sys/syscall.h>
-#include <sys/types.h>
-#include <asm/fcntl.h>
-#include <asm/errno.h>
+#include <uapi/asm-generic/unistd.h>
+#include <linux/syscalls.h>
+#include <uapi/asm-generic/fcntl.h>
+#include <uapi/asm-generic/errno.h>
 #include <linux/types.h>
 #include <linux/dirent.h>
-#include <sys/mman.h>
+#include <linux/mman.h>
 #include <linux/string.h>
 #include <linux/fs.h>
 #include <linux/malloc.h>
